@@ -22,3 +22,11 @@ GitHub Action to send a text notification to a Lark/Feishu custom bot via webhoo
 
 Enable signature verification on the custom bot to get a `secret`; omit it if the
 bot doesn't have signature verification enabled.
+
+## Personal notifications
+
+A group can have just one member, so notifying a single person needs no app bot:
+create a group with only yourself, add a custom bot to it (group settings → Group
+Bots → Add Bot → Custom Bot), and use its webhook as above. See Feishu's
+[custom bot guide](https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot)
+(checked 2026-10-23).

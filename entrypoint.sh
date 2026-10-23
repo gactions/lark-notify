@@ -22,7 +22,11 @@ ${secret}"
   body=$(printf '%s' "${body}" | jq --arg ts "${timestamp}" --arg sign "${sign}" '. + {timestamp: $ts, sign: $sign}')
 fi
 
-response=$(curl -sS -w '\n%{http_code}' -X POST -H 'Content-Type: application/json' -d "${body}" "${webhook}")
+if ! response=$(curl -sS --connect-timeout 10 --max-time 30 -w '\n%{http_code}' \
+  -X POST -H 'Content-Type: application/json' -d "${body}" "${webhook}"); then
+  echo "::error::Lark webhook request failed"
+  exit 1
+fi
 http_code=$(printf '%s' "${response}" | tail -n1)
 resp_body=$(printf '%s' "${response}" | sed '$d')
 
