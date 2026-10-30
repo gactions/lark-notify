@@ -1,5 +1,5 @@
 name: 'Lark Notify'
-description: 'Send a text notification to a Lark/Feishu custom bot via webhook.'
+description: 'Send a status card or text notification to a Lark/Feishu custom bot via webhook.'
 
 branding:
   icon: 'message-square'
@@ -10,8 +10,20 @@ inputs:
     description: 'Lark/Feishu custom bot webhook URL'
     required: true
   content:
-    description: 'Text message content to send'
+    description: 'Message body; supports Lark Markdown in card format'
     required: true
+  format:
+    description: 'Message format: card or text'
+    required: false
+    default: 'card'
+  title:
+    description: 'Card title; falls back to the workflow name'
+    required: false
+    default: ''
+  status:
+    description: 'Card status: success, failure, cancelled or skipped; defaults to the current job status'
+    required: false
+    default: ''
   secret:
     description: 'Signing secret from the bot''s signature verification setting'
     required: false
@@ -20,9 +32,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: ${{ github.action_path }}/entrypoint.sh
+    - run: bash "$GITHUB_ACTION_PATH/entrypoint.sh"
       shell: bash
       env:
         INPUT_WEBHOOK: ${{ inputs.webhook }}
         INPUT_CONTENT: ${{ inputs.content }}
+        INPUT_FORMAT: ${{ inputs.format }}
+        INPUT_TITLE: ${{ inputs.title }}
+        INPUT_STATUS: ${{ inputs.status || job.status }}
         INPUT_SECRET: ${{ inputs.secret }}
