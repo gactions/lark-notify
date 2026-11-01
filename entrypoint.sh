@@ -25,8 +25,8 @@ case "${format}" in
       skipped) color=grey icon='⚪' outcome=skipped button=default ;;
       *) color=grey icon='🔔' outcome="${status}" button=default ;;
     esac
-    card_title="${icon} ${title}${outcome:+ · ${outcome}}"
-    finished="$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S') (UTC+8)"
+    card_title="${icon}${outcome:+ ${outcome}} · ${title}"
+    finished="$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M') (UTC+8)"
     repository="${GITHUB_REPOSITORY:-}"
     server_url="${GITHUB_SERVER_URL:-https://github.com}"
     run_url=''
@@ -48,8 +48,17 @@ case "${format}" in
       --arg repository "${repository}" --arg ref "${GITHUB_HEAD_REF:-${GITHUB_REF_NAME:-}}" \
       --arg trigger "${trigger}" --arg finished "${finished}" \
       --arg run_url "${run_url}" --arg commit_url "${commit_url}" '
-      def field($name; $value):
-        {is_short: false, text: {tag: "plain_text", content: "\($name): \($value)"}};
+      def row($name; $value):
+        {
+          tag: "column_set", flex_mode: "none", background_style: "default",
+          horizontal_spacing: "small",
+          columns: [
+            {tag: "column", width: "weighted", weight: 1, vertical_align: "top",
+             elements: [{tag: "div", text: {tag: "lark_md", content: "**\($name)**"}}]},
+            {tag: "column", width: "weighted", weight: 4, vertical_align: "top",
+             elements: [{tag: "div", text: {tag: "plain_text", content: $value}}]}
+          ]
+        };
       def button($text; $type; $url):
         {tag: "button", text: {tag: "plain_text", content: $text}, type: $type, url: $url};
       {
@@ -59,17 +68,15 @@ case "${format}" in
           header: {template: $color, title: {tag: "plain_text", content: $title}},
           elements: (
             [{tag: "div", text: {tag: "lark_md", content: $content}}]
-            + [{tag: "div", fields: (
-                (if $repository == "" then [] else [field("Repository"; $repository)] end)
-                + (if $ref == "" then [] else [field("Branch / tag"; $ref)] end)
-                + (if $trigger == "" then [] else [field("Triggered by"; $trigger)] end)
-                + [field("Finished"; $finished)]
-              )}]
+            + (if $repository == "" then [] else [row("📦 Repo"; $repository)] end)
+            + (if $ref == "" then [] else [row("🌿 Ref"; $ref)] end)
+            + (if $trigger == "" then [] else [row("👤 By"; $trigger)] end)
+            + [row("🕒 Time"; $finished)]
             + (if $run_url == "" and $commit_url == "" then [] else [
                 {tag: "hr"},
                 {tag: "action", actions: (
-                  (if $run_url == "" then [] else [button("View logs"; $button; $run_url)] end)
-                  + (if $commit_url == "" then [] else [button("View commit"; "default"; $commit_url)] end)
+                  (if $run_url == "" then [] else [button("📋 Logs"; $button; $run_url)] end)
+                  + (if $commit_url == "" then [] else [button("🔗 Commit"; "default"; $commit_url)] end)
                 )}
               ] end)
           )

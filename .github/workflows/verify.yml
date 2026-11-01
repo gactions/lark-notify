@@ -45,10 +45,9 @@ jobs:
         with:
           webhook: ${{ secrets.LARK_WEBHOOK }}
           secret: ${{ secrets.LARK_SECRET }}
-          title: Lark Notify 展示验证
+          title: Lark Notify preview
           status: ${{ inputs.status }}
           format: ${{ inputs.format }}
           content: |
-            **验证目的**：检查通知可读性
-            **展示要求**：每项上下文信息独占一行，标签和值同行
-            **检查项目**：仓库、分支、触发人、完成时间及底部链接
+            This is a test notification.
+            Check the aligned labels and links below.
