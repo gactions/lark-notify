@@ -68,6 +68,7 @@ case "${format}" in
           header: {template: $color, title: {tag: "plain_text", content: $title}},
           elements: (
             [{tag: "div", text: {tag: "lark_md", content: $content}}]
+            + [{tag: "hr"}]
             + (if $repository == "" then [] else [row("📦 Repo"; $repository)] end)
             + (if $ref == "" then [] else [row("🌿 Ref"; $ref)] end)
             + (if $trigger == "" then [] else [row("👤 By"; $trigger)] end)
