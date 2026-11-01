@@ -53,7 +53,7 @@ case "${format}" in
           tag: "column_set", flex_mode: "none", background_style: "default",
           horizontal_spacing: "small",
           columns: [
-            {tag: "column", width: "weighted", weight: 1, vertical_align: "top",
+            {tag: "column", width: "weighted", weight: 2, vertical_align: "top",
              elements: [{tag: "div", text: {tag: "lark_md", content: "**\($name)**"}}]},
             {tag: "column", width: "weighted", weight: 4, vertical_align: "top",
              elements: [{tag: "div", text: {tag: "plain_text", content: $value}}]}
