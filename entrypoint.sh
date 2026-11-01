@@ -49,7 +49,7 @@ case "${format}" in
       --arg trigger "${trigger}" --arg finished "${finished}" \
       --arg run_url "${run_url}" --arg commit_url "${commit_url}" '
       def field($name; $value):
-        {is_short: true, text: {tag: "plain_text", content: "\($name)\n\($value)"}};
+        {is_short: false, text: {tag: "plain_text", content: "\($name): \($value)"}};
       def button($text; $type; $url):
         {tag: "button", text: {tag: "plain_text", content: $text}, type: $type, url: $url};
       {

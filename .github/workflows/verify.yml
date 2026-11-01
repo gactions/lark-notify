@@ -1,0 +1,54 @@
+name: Verify Lark Notify
+
+on:
+  workflow_dispatch:
+    inputs:
+      status:
+        description: Status to preview
+        type: choice
+        default: success
+        options:
+          - success
+          - failure
+          - cancelled
+          - skipped
+      format:
+        description: Message format to preview
+        type: choice
+        default: card
+        options:
+          - card
+          - text
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check webhook configuration
+        shell: bash
+        env:
+          LARK_WEBHOOK: ${{ secrets.LARK_WEBHOOK }}
+        run: |
+          if [[ -z "${LARK_WEBHOOK}" ]]; then
+            echo '::error::Set the LARK_WEBHOOK repository secret before running this workflow.'
+            exit 1
+          fi
+
+      - name: Send preview notification
+        uses: ./
+        with:
+          webhook: ${{ secrets.LARK_WEBHOOK }}
+          secret: ${{ secrets.LARK_SECRET }}
+          title: Lark Notify 展示验证
+          status: ${{ inputs.status }}
+          format: ${{ inputs.format }}
+          content: |
+            **验证目的**：检查通知可读性
+            **展示要求**：每项上下文信息独占一行，标签和值同行
+            **检查项目**：仓库、分支、触发人、完成时间及底部链接
